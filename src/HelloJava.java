@@ -3,15 +3,15 @@ import java.util.Scanner;
 
 public class HelloJava {
 
-	private HashMap<String, Exercise> exercises = new HashMap<String, Exercise>();
+	private HashMap<String, Class<? extends Exercise>> exercises = new HashMap<>();
 	
 	private void registerExercises() {
 		// Register an exercise with the class name as the key
 		// and the instance as the value.
-		this.exercises.put("UserNum", new UserNum());
-		this.exercises.put("HelloArray", new HelloArray());
+		this.exercises.put("UserNum", UserNum.class);
+		this.exercises.put("HelloArray", HelloArray.class);
 	}
-	
+
 	// Class constructor
 	public HelloJava() {
 		registerExercises();
@@ -39,8 +39,13 @@ public class HelloJava {
 		for(String ex: hj.exercises.keySet()) {
 			if (i == exNum) {
 				// This is the exercise we want. Execute it and then break
-				hj.exercises.get(ex).runMe(keyboard);
-				break;
+				try {
+					hj.exercises.get(ex).newInstance().runMe(keyboard);
+				} catch (InstantiationException | IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;	
 			} else {
 				i++;
 			}
